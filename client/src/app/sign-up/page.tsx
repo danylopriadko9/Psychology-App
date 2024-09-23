@@ -49,7 +49,7 @@ export default function SingIn() {
 
   return (
     <main className=' w-full flex flex-col justify-center items-center py-20'>
-      <div className='flex flex-col'>
+      <div className='flex flex-col md:w-1/3 w-11/12'>
         <h1 className=' text-3xl font-bold text-left w-full mb-5'>
           Create an account 🏁
         </h1>
