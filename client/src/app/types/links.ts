@@ -4,4 +4,9 @@ interface INavLink {
   description?: string;
 }
 
-export type { INavLink };
+interface IPasswords {
+  password: string;
+  repeatedPassword: string;
+}
+
+export type { INavLink, IPasswords };
