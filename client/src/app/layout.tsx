@@ -4,7 +4,6 @@ import './globals.css';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Container from './Components/Container';
-import { store } from '@/GlobalRedux/store';
 import Providers from '@/GlobalRedux/Provider';
 
 const inter = Inter({ subsets: ['latin'] });

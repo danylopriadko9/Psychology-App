@@ -12,7 +12,9 @@ import { changeMenuStatus } from '@/GlobalRedux/features/mobileMenu/menuSlice';
 
 export default function Header() {
   const pathname = usePathname();
-  const { isMenuOpen } = useSelector((state: RootState) => state.menu);
+  const { isMenuOpen }: { isMenuOpen: boolean } = useSelector(
+    (state: RootState) => state.menu
+  );
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -45,7 +47,7 @@ export default function Header() {
   );
 }
 
-const navLinks: INavLink[] = [
+export const navLinks: INavLink[] = [
   {
     title: 'Home',
     url: '/',
