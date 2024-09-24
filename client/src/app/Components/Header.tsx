@@ -53,12 +53,24 @@ export const navLinks: INavLink[] = [
     url: '/',
   },
   {
+    title: 'Pricing',
+    url: '/pricing',
+  },
+  {
     title: 'Tests',
     url: '/psycho-tests',
   },
   {
+    title: 'Blog',
+    url: '/blog',
+  },
+  {
     title: 'About me',
     url: '/about-me',
+  },
+  {
+    title: 'Links',
+    url: '/links',
   },
   {
     title: 'Sign-up',
