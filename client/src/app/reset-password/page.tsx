@@ -6,6 +6,8 @@ import Timer from '../Components/Timer';
 import { IPasswords } from '../types/links';
 import Swal from 'sweetalert2';
 
+//NEED TO BE REFACTORED, SOME LOGIC MUST BE REPLACED IN OWN COMPONENTS
+
 export default function EmailCodeCheck() {
   const [email, setEmail] = React.useState<string>('');
   const [isCodeSend, setIsCodeSend] = React.useState<boolean>(false);
