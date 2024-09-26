@@ -3,48 +3,15 @@
 import React from 'react';
 import OTPInput from '../Components/OTPInput';
 import Timer from '../Components/Timer';
-import { IPasswords } from '../types/links';
-import Swal from 'sweetalert2';
-import PasswordInput from '../Components/PasswordInput';
 import ButtonElement from '../Components/ButtonElement';
 import InputElement from '../Components/InputElement';
-
-//NEED TO BE REFACTORED, SOME LOGIC MUST BE REPLACED IN OWN COMPONENTS
+import PasswordCompare from '../Components/PasswordsCompare';
 
 export default function EmailCodeCheck() {
   const [email, setEmail] = React.useState<string>('');
   const [isCodeSend, setIsCodeSend] = React.useState<boolean>(false);
   const [isCodesTheSame, setIsCodesTheSame] = React.useState(false);
-
   const [timeLeft, setTimeLeft] = React.useState(30);
-
-  //   const handlePasswords = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     setPasswords((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  //   };
-
-  const [password, setPassword] = React.useState<string>('');
-  const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');
-
-  const passwordsAreNotTheSameError = () => {
-    if (password !== repeatedPassword || password === '') {
-      Swal.fire({
-        title: 'Error!',
-        text: 'The passwords you entered do not match...',
-        icon: 'error',
-        confirmButtonText: 'Try one more time',
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: 'Great!',
-      text: 'Account has been created! You will be redirected to the home page after a few seconds...',
-      icon: 'success',
-      confirmButtonText: 'Got it!',
-    });
-
-    //Request on server
-  };
 
   return (
     <div className=' flex flex-col justify-center items-center py-20'>
@@ -55,23 +22,10 @@ export default function EmailCodeCheck() {
               <h1 className=' text-3xl font-bold text-left w-full mb-5'>
                 Provide new password 🔒
               </h1>
-              <PasswordInput
-                type='password'
-                value={password}
-                handleChange={(e) => setPassword(e.target.value)}
-                labelTitle='Password'
-                placeholder='At least 8 characters'
-              />
-              <PasswordInput
-                type='repeatedPassword'
-                value={repeatedPassword}
-                handleChange={(e) => setRepeatedPassword(e.target.value)}
-                labelTitle='Repeat your password'
-                placeholder='Repeat new password here...'
-              />
-              <ButtonElement
-                title='Change password'
-                handleClick={passwordsAreNotTheSameError}
+              <PasswordCompare
+                buttonTitle='Change password'
+                buttonFunctionAfterValidation={() => {}}
+                //Maybe also I will need to add props such as name, email or userId
               />
             </div>
           ) : (

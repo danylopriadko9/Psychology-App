@@ -1,37 +1,12 @@
 'use client';
 import Link from 'next/link';
 import React from 'react';
-import Swal from 'sweetalert2';
-import PasswordInput from '../Components/PasswordInput';
-import ButtonElement from '../Components/ButtonElement';
 import InputElement from '../Components/InputElement';
+import PasswordCompare from '../Components/PasswordsCompare';
 
 export default function SingIn() {
-  const [password, setPassword] = React.useState<string>('');
-  const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
-
-  const passwordsAreNotTheSameError = () => {
-    if (password !== repeatedPassword || password === '') {
-      Swal.fire({
-        title: 'Error!',
-        text: 'The passwords you entered do not match...',
-        icon: 'error',
-        confirmButtonText: 'Try one more time',
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: 'Great!',
-      text: 'Account has been created! You will be redirected to the home page after a few seconds...',
-      icon: 'success',
-      confirmButtonText: 'Got it!',
-    });
-
-    //Request on server
-  };
 
   return (
     <main className=' w-full flex flex-col justify-center items-center py-20'>
@@ -59,23 +34,10 @@ export default function SingIn() {
             value={email}
             handleChange={(e) => setEmail(e.target.value)}
           />
-          <PasswordInput
-            type='password'
-            value={password}
-            handleChange={(e) => setPassword(e.target.value)}
-            labelTitle='Password'
-            placeholder='At least 8 characters'
-          />
-          <PasswordInput
-            type='repeatedPassword'
-            value={repeatedPassword}
-            handleChange={(e) => setRepeatedPassword(e.target.value)}
-            labelTitle='Repeat your password'
-            placeholder='Repeat your password here...'
-          />
-          <ButtonElement
-            title='Sign Up'
-            handleClick={passwordsAreNotTheSameError}
+          <PasswordCompare
+            buttonTitle='Sign up'
+            buttonFunctionAfterValidation={() => {}}
+            //Maybe also I will need to add props such as name, email or userId
           />
         </div>
         <p className='text-center mt-2'>
