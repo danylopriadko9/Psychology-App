@@ -5,6 +5,9 @@ import OTPInput from '../Components/OTPInput';
 import Timer from '../Components/Timer';
 import { IPasswords } from '../types/links';
 import Swal from 'sweetalert2';
+import PasswordInput from '../Components/PasswordInput';
+import ButtonElement from '../Components/ButtonElement';
+import InputElement from '../Components/InputElement';
 
 //NEED TO BE REFACTORED, SOME LOGIC MUST BE REPLACED IN OWN COMPONENTS
 
@@ -12,27 +15,18 @@ export default function EmailCodeCheck() {
   const [email, setEmail] = React.useState<string>('');
   const [isCodeSend, setIsCodeSend] = React.useState<boolean>(false);
   const [isCodesTheSame, setIsCodesTheSame] = React.useState(false);
-  const [isPasswordVissible, setIsPasswordVissible] =
-    React.useState<boolean>(false);
-  const [isRepeatedPasswordVissible, setIsRepeatedPasswordVissible] =
-    React.useState<boolean>(false);
 
   const [timeLeft, setTimeLeft] = React.useState(30);
 
-  const handlePasswords = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswords((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  //   const handlePasswords = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     setPasswords((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  //   };
 
-  const [passwords, setPasswords] = React.useState<IPasswords>({
-    password: '',
-    repeatedPassword: '',
-  });
+  const [password, setPassword] = React.useState<string>('');
+  const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');
 
   const passwordsAreNotTheSameError = () => {
-    if (
-      passwords.password !== passwords.repeatedPassword ||
-      passwords.password === ''
-    ) {
+    if (password !== repeatedPassword || password === '') {
       Swal.fire({
         title: 'Error!',
         text: 'The passwords you entered do not match...',
@@ -61,45 +55,24 @@ export default function EmailCodeCheck() {
               <h1 className=' text-3xl font-bold text-left w-full mb-5'>
                 Provide new password 🔒
               </h1>
-
-              <label htmlFor='password'>Password</label>
-              <div className='flex w-full justify-between rounded-md border bg-[#E7F0FF] '>
-                <input
-                  className='bg-[#E7F0FF] h-full w-11/12 px-6 py-3 focus:outline-none'
-                  name='password'
-                  type={isPasswordVissible ? 'text' : 'password'}
-                  placeholder='At least 8 characters'
-                  onChange={(e) => handlePasswords(e)}
-                />
-                <button
-                  className='text-xl mr-2 bg-[#E7F0FF]'
-                  onClick={() => setIsPasswordVissible((prev) => !prev)}
-                >
-                  {isPasswordVissible ? '🐵' : '🙈'}
-                </button>
-              </div>
-              <label htmlFor='repeatedPassword'>Repeat your password</label>
-              <div className='flex w-full justify-between rounded-md border bg-[#E7F0FF] '>
-                <input
-                  className='bg-[#E7F0FF] h-full w-11/12 px-6 py-3 focus:outline-none'
-                  name='repeatedPassword'
-                  type={isRepeatedPasswordVissible ? 'text' : 'password'}
-                  placeholder='At least 8 characters'
-                  onChange={(e) => handlePasswords(e)}
-                />
-                <button
-                  className='text-xl mr-2 bg-[#E7F0FF]'
-                  onClick={() => setIsRepeatedPasswordVissible((prev) => !prev)}
-                >
-                  {isRepeatedPasswordVissible ? '🐵' : '🙈'}
-                </button>
-              </div>
-              <button
-                onClick={passwordsAreNotTheSameError}
-                className='rounded-md bg-[#0E2D3B] active:bg-[#0c2531] hover:bg-[#133c4f] text-white py-3 mt-8'
-              >
-                Change password
-              </button>
+              <PasswordInput
+                type='password'
+                value={password}
+                handleChange={(e) => setPassword(e.target.value)}
+                labelTitle='Password'
+                placeholder='At least 8 characters'
+              />
+              <PasswordInput
+                type='repeatedPassword'
+                value={repeatedPassword}
+                handleChange={(e) => setRepeatedPassword(e.target.value)}
+                labelTitle='Repeat your password'
+                placeholder='Repeat new password here...'
+              />
+              <ButtonElement
+                title='Change password'
+                handleClick={passwordsAreNotTheSameError}
+              />
             </div>
           ) : (
             <>
@@ -107,12 +80,10 @@ export default function EmailCodeCheck() {
                 Provide code from your email 🔒
               </h1>
               <OTPInput length={5} />
-              <button
-                onClick={() => setIsCodesTheSame(true)}
-                className='rounded-md bg-[#0E2D3B] active:bg-[#0c2531] hover:bg-[#133c4f] text-white py-3 mt-8'
-              >
-                Check code
-              </button>
+              <ButtonElement
+                title='Provide code'
+                handleClick={() => setIsCodesTheSame(true)}
+              />
               <p className='text-right mt-3'>
                 Don't get any mails?{' '}
                 {timeLeft === 0 ? (
@@ -136,20 +107,17 @@ export default function EmailCodeCheck() {
             <h1 className=' text-3xl font-bold text-left w-full mb-5'>
               Provide your email 📨
             </h1>
-            <input
-              className=' rounded-md border bg-[#E7F0FF] px-6 py-3 focus:outline-none'
+            <InputElement
+              labelTitle=''
               name='email'
-              type='text'
               placeholder='example@gmail.com'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              handleChange={(e) => setEmail(e.target.value)}
             />
-            <button
-              onClick={() => setIsCodeSend(true)}
-              className='rounded-md bg-[#0E2D3B] active:bg-[#0c2531] hover:bg-[#133c4f] text-white py-3 mt-8'
-            >
-              Send code
-            </button>
+            <ButtonElement
+              title='Send code'
+              handleClick={() => setIsCodeSend(true)}
+            />
           </>
         )}
       </div>

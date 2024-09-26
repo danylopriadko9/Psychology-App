@@ -4,9 +4,9 @@ import React from 'react';
 interface IProps {
   type: 'password' | 'repeatedPassword';
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<number>>;
   handleChange(e: React.ChangeEvent<HTMLInputElement>): void;
   labelTitle: string;
+  placeholder: string;
 }
 
 export default function PasswordInput({
@@ -14,18 +14,19 @@ export default function PasswordInput({
   value,
   handleChange,
   labelTitle,
+  placeholder,
 }: IProps) {
   const [isPasswordVissible, setIsPasswordVissible] =
     React.useState<boolean>(false);
   return (
-    <div>
+    <div className=' flex flex-col gap-1 w-full'>
       <label htmlFor={type}>{labelTitle}</label>
       <div className='flex w-full justify-between rounded-md border bg-[#E7F0FF] '>
         <input
           className='bg-[#E7F0FF] h-full w-11/12 px-6 py-3 focus:outline-none'
           name={type}
           type={isPasswordVissible ? 'text' : 'password'}
-          placeholder='At least 8 characters'
+          placeholder={placeholder}
           onChange={(e) => handleChange(e)}
           value={value}
         />
