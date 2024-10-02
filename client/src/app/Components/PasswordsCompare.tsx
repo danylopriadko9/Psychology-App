@@ -5,37 +5,25 @@ import Swal from 'sweetalert2';
 
 interface IProps {
   buttonTitle: string;
-  buttonFunctionAfterValidation(): void;
+  buttonFunction(): void;
+  successPopUpMessage: string;
+  errorPopUpMessage: string;
+  errorFunction(): void;
+  successButtonTitle: string;
+  errorButtonTitle: string;
 }
 
 export default function PasswordCompare({
   buttonTitle,
-  buttonFunctionAfterValidation,
+  buttonFunction,
+  successPopUpMessage,
+  errorPopUpMessage,
+  errorFunction,
+  successButtonTitle,
+  errorButtonTitle,
 }: IProps) {
   const [password, setPassword] = React.useState<string>('');
   const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');
-
-  const passwordsAreNotTheSameError = () => {
-    if (password !== repeatedPassword || password === '') {
-      Swal.fire({
-        title: 'Error!',
-        text: 'The passwords you entered do not match...',
-        icon: 'error',
-        confirmButtonText: 'Try one more time',
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: 'Great!',
-      text: 'Account has been created! You will be redirected to the home page after a few seconds...',
-      icon: 'success',
-      confirmButtonText: 'Got it!',
-    });
-
-    buttonFunctionAfterValidation();
-    //Request on server
-  };
 
   return (
     <div className='flex flex-col gap-3'>
@@ -53,10 +41,7 @@ export default function PasswordCompare({
         labelTitle='Repeat your password'
         placeholder='Repeat your password here...'
       />
-      <ButtonElement
-        title={buttonTitle}
-        handleClick={passwordsAreNotTheSameError}
-      />
+      <ButtonElement title={buttonTitle} handleClick={buttonFunction} />
     </div>
   );
 }

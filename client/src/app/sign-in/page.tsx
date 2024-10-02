@@ -4,10 +4,16 @@ import React from 'react';
 import PasswordInput from '../Components/PasswordInput';
 import ButtonElement from '../Components/ButtonElement';
 import InputElement from '../Components/InputElement';
+import { useRouter } from 'next/navigation';
 
 export default function SingIn() {
   const [password, setPassword] = React.useState<string>('');
   const [email, setEmail] = React.useState<string>('');
+  const router = useRouter();
+
+  const handleButton = () => {
+    router.push('/');
+  };
 
   return (
     <main className=' flex flex-col justify-center items-center py-20'>
@@ -39,11 +45,11 @@ export default function SingIn() {
           />
           <Link
             className='text-blue-500 text-right underline'
-            href='/reset-password'
+            href='/email-provide'
           >
             Forgot password?
           </Link>
-          <ButtonElement title='Sign In' handleClick={() => {}} />
+          <ButtonElement title='Sign In' handleClick={handleButton} />
         </div>
         <p className='text-center mt-2'>
           Do not you have an account?{' '}

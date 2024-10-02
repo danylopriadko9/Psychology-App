@@ -1,8 +1,9 @@
-import express from 'express';
-import usersRouter from './routes/users';
-import 'dotenv/config';
+const express = require('express');
+const usersRouter = require('./routes/users');
+require('dotenv').config();
 
 const app = express();
+const bodyParser = require('express');
 
 app.use('/api/users', usersRouter);
 

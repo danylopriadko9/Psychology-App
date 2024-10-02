@@ -3,10 +3,17 @@ import Link from 'next/link';
 import React from 'react';
 import InputElement from '../Components/InputElement';
 import PasswordCompare from '../Components/PasswordsCompare';
+import { useRouter } from 'next/navigation';
 
 export default function SingIn() {
+  const router = useRouter();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
+
+  const handleButton = () => {
+    console.log('sddsds');
+    router.push('/email-code-check');
+  };
 
   return (
     <main className=' w-full flex flex-col justify-center items-center py-20'>
@@ -36,7 +43,12 @@ export default function SingIn() {
           />
           <PasswordCompare
             buttonTitle='Sign up'
-            buttonFunctionAfterValidation={() => {}}
+            buttonFunction={handleButton}
+            successPopUpMessage='Account has been created! You will be redirected to the home page after a few seconds...'
+            errorPopUpMessage='The passwords you entered do not match...'
+            errorFunction={() => {}}
+            successButtonTitle='Got it'
+            errorButtonTitle='Try one more time'
             //Maybe also I will need to add props such as name, email or userId
           />
         </div>
