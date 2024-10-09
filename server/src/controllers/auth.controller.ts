@@ -3,8 +3,11 @@ import { User } from '../models/user.model';
 import bcrypt from 'bcryptjs';
 import { generateVerificationToken } from '../utils/generateVerificationToken';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie';
-import { sendVerificationMail } from '../nodemailer/sendVerificationMail';
-import { VERIFICATION_EMAIL_TEMPLATE } from '../nodemailer/emailTemplates';
+import { sendEmail } from '../nodemailer/sendEmail';
+import {
+  VERIFICATION_EMAIL_TEMPLATE,
+  WELCOME_EMAIL_TEMPLATE,
+} from '../nodemailer/emailTemplates';
 
 export const SignUp = async (req: Request, res: Response) => {
   const { email, name, password } = req.body;
@@ -33,7 +36,7 @@ export const SignUp = async (req: Request, res: Response) => {
 
     await user.save();
     generateTokenAndSetCookie(res, user._id);
-    sendVerificationMail(
+    sendEmail(
       user.email,
       'Email Verification',
       VERIFICATION_EMAIL_TEMPLATE.replace(
@@ -57,6 +60,93 @@ export const SignUp = async (req: Request, res: Response) => {
       res.status(400).json({
         success: false,
         message: '[server/SignUp-Controller]: Unknown error occured',
+      });
+    res.status(400).json({ success: false, message: message });
+  }
+};
+
+export const VerifyEmail = async (req: Request, res: Response) => {
+  const { code, email } = req.body;
+  try {
+    const user = await User.findOne({
+      verificationToken: code,
+      verificationTokenExpiresAt: { $gt: Date.now() },
+      email,
+    });
+
+    if (!user)
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code',
+      });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
+    await user.save();
+
+    await sendEmail(
+      user.email,
+      'Welcome from Elena Halashova!',
+      WELCOME_EMAIL_TEMPLATE.replace('{name}', user.name)
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'User was verified successfully!',
+      user: { ...user._doc, password: undefined },
+    });
+  } catch (error) {
+    let message;
+    if (error) message = String(error);
+    else
+      res.status(400).json({
+        success: false,
+        message: '[server/Verify-Email-Controller]: Unknown error occured',
+      });
+    res.status(400).json({ success: false, message: message });
+  }
+};
+
+export const SendAnotherEmailVerificationCode = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(200).json({ success: false, message: 'Invalid email' });
+
+    const code = generateVerificationToken();
+    user.verificationToken = code;
+    user.verificationTokenExpiresAt = new Date(
+      Date.now() + 24 * 60 * 60 * 1000
+    );
+
+    user.save();
+
+    sendEmail(
+      user.email,
+      'Email Verification',
+      VERIFICATION_EMAIL_TEMPLATE.replace('{verificationCode}', code)
+    );
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: 'New email verification code was send successfully',
+        user: { ...user._doc, password: undefined },
+      });
+  } catch (error) {
+    let message;
+    if (error) message = String(error);
+    else
+      res.status(400).json({
+        success: false,
+        message:
+          '[server/Send-Another-Email-Verification-Code]: Unknown error occured',
       });
     res.status(400).json({ success: false, message: message });
   }

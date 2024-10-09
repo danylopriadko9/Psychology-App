@@ -1,11 +1,21 @@
 import express from 'express';
-import { Logout, SignIn, SignUp } from '../controllers/auth.controller';
+import {
+  Logout,
+  SendAnotherEmailVerificationCode,
+  SignIn,
+  SignUp,
+  VerifyEmail,
+} from '../controllers/auth.controller';
 const router = express.Router();
 
-router.get('/sign-up', SignUp as any);
+router.post('/sign-up', SignUp as any);
+router.post('/sign-in', SignIn);
+router.post('/logout', Logout);
 
-router.get('/sign-in', SignIn);
-
-router.get('/logout', Logout);
+router.post('/verify-email', VerifyEmail as any);
+router.post(
+  '/send-new-email-verification-code',
+  SendAnotherEmailVerificationCode as any
+);
 
 export default router;

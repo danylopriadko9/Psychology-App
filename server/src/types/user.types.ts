@@ -8,8 +8,8 @@ export interface IUser {
   isVerified: boolean;
   resetPasswordToken: String;
   resrtPasswordExpiresAt: Date;
-  verificationToken: String;
-  verificationTokenExpiresAt: Date;
+  verificationToken: String | undefined;
+  verificationTokenExpiresAt: Date | undefined;
 }
 
 export interface IUserDocument extends IUser, mongoose.Document {
