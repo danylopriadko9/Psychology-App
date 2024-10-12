@@ -24,6 +24,11 @@ export const SignUp = async (req: Request, res: Response) => {
         .json({ success: false, message: 'User already exists' });
     }
 
+    if (!process.env.BCRYPT_SECRET)
+      return res.status(400).json({
+        success: false,
+        message: 'Error (BCRYPT_SECRET is undefined)',
+      });
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = generateVerificationToken();
     const user = new User({
@@ -124,7 +129,7 @@ export const SendAnotherEmailVerificationCode = async (
       Date.now() + 24 * 60 * 60 * 1000
     );
 
-    user.save();
+    await user.save();
 
     sendEmail(
       user.email,
@@ -132,13 +137,11 @@ export const SendAnotherEmailVerificationCode = async (
       VERIFICATION_EMAIL_TEMPLATE.replace('{verificationCode}', code)
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: 'New email verification code was send successfully',
-        user: { ...user._doc, password: undefined },
-      });
+    res.status(200).json({
+      success: true,
+      message: 'New email verification code was send successfully',
+      user: { ...user._doc, password: undefined },
+    });
   } catch (error) {
     let message;
     if (error) message = String(error);
@@ -153,9 +156,39 @@ export const SendAnotherEmailVerificationCode = async (
 };
 
 export const SignIn = async (req: Request, res: Response) => {
-  res.send('SignIn');
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Invalid credentials' });
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Invalid credentials' });
+
+    generateTokenAndSetCookie(res, user._id);
+    user.lastLogin = new Date(Date.now());
+    await user.save();
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: 'Logged in successfully',
+        user: { ...user._doc, password: undefined },
+      });
+  } catch (error) {
+    throw new Error(`[server:SignIn]: Something went wrong ${String(error)}`);
+  }
 };
 
 export const Logout = async (req: Request, res: Response) => {
-  res.send('Logout');
+  res.clearCookie('token');
+  res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
