@@ -1,10 +1,12 @@
 import express from 'express';
 import {
+  ForgotPassword,
   Logout,
   SendAnotherEmailVerificationCode,
   SignIn,
   SignUp,
   VerifyEmail,
+  ResetPassword,
 } from '../controllers/auth.controller';
 const router = express.Router();
 
@@ -18,4 +20,6 @@ router.post(
   SendAnotherEmailVerificationCode as any
 );
 
+router.post('/forgot-password', ForgotPassword as any);
+router.post('/reset-password', ResetPassword as any);
 export default router;

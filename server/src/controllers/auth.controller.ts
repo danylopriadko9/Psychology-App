@@ -1,10 +1,14 @@
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+
 import { Request, Response } from 'express';
 import { User } from '../models/user.model';
-import bcrypt from 'bcryptjs';
 import { generateVerificationToken } from '../utils/generateVerificationToken';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie';
 import { sendEmail } from '../nodemailer/sendEmail';
 import {
+  PASSWORD_RESET_REQUEST_TEMPLATE,
+  PASSWORD_RESET_SUCCESS_TEMPLATE,
   VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
 } from '../nodemailer/emailTemplates';
@@ -24,11 +28,6 @@ export const SignUp = async (req: Request, res: Response) => {
         .json({ success: false, message: 'User already exists' });
     }
 
-    if (!process.env.BCRYPT_SECRET)
-      return res.status(400).json({
-        success: false,
-        message: 'Error (BCRYPT_SECRET is undefined)',
-      });
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = generateVerificationToken();
     const user = new User({
@@ -176,13 +175,11 @@ export const SignIn = async (req: Request, res: Response) => {
     user.lastLogin = new Date(Date.now());
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: 'Logged in successfully',
-        user: { ...user._doc, password: undefined },
-      });
+    res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      user: { ...user._doc, password: undefined },
+    });
   } catch (error) {
     throw new Error(`[server:SignIn]: Something went wrong ${String(error)}`);
   }
@@ -191,4 +188,82 @@ export const SignIn = async (req: Request, res: Response) => {
 export const Logout = async (req: Request, res: Response) => {
   res.clearCookie('token');
   res.status(200).json({ success: true, message: 'Logged out successfully' });
+};
+
+export const ForgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: 'User not found' });
+
+    //generate reset token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const randomTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; //1 hour
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiresAt = new Date(randomTokenExpiresAt);
+
+    await user.save();
+
+    //send email to the user
+    if (!process.env.CLIENT_URL)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Client url has not found' });
+
+    sendEmail(
+      email,
+      'Reset Password',
+      PASSWORD_RESET_REQUEST_TEMPLATE.replace(
+        '{resetURL}',
+        `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+      )
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Email with reset password link was sended correctly',
+      user: { ...user._doc, password: undefined },
+    });
+  } catch (error) {
+    const message = String(error);
+    console.log('Error in forgotPassword ', error);
+    res.status(400).json({ success: false, message });
+  }
+};
+
+export const ResetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, password, resetPasswordToken } = req.body;
+    const user = await User.findOne({ email, resetPasswordToken });
+    if (!user) return res.status(404).json('Invalid email');
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+
+    await user.save();
+
+    sendEmail(
+      email,
+      'Password was changed successfully!',
+      PASSWORD_RESET_SUCCESS_TEMPLATE
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Password was changed successfully',
+      user: { ...user._doc, password: undefined },
+    });
+  } catch (error) {
+    let message = String(error);
+    console.log('error in reset password ', message);
+    res
+      .status(400)
+      .json({ success: false, message: 'Error in reset password' });
+  }
 };

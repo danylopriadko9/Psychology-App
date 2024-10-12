@@ -6,8 +6,8 @@ export interface IUser {
   name: string;
   lastLogin: Date;
   isVerified: boolean;
-  resetPasswordToken: String;
-  resrtPasswordExpiresAt: Date;
+  resetPasswordToken: String | undefined;
+  resetPasswordExpiresAt: Date | undefined;
   verificationToken: String | undefined;
   verificationTokenExpiresAt: Date | undefined;
 }
