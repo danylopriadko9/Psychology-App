@@ -1,10 +1,15 @@
+//###############################################################
+//============= CRYPTO SERVICES ===================
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-
+//============= REQ, RES TYPES ===================
 import { Request, Response } from 'express';
+//============= MONGODB MODELS ===================
 import { User } from '../models/user.model';
+//============= UTILITIES ===================
 import { generateVerificationToken } from '../utils/generateVerificationToken';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie';
+//============= EMAIL SERVICES ===================
 import { sendEmail } from '../nodemailer/sendEmail';
 import {
   PASSWORD_RESET_REQUEST_TEMPLATE,
@@ -12,6 +17,7 @@ import {
   VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
 } from '../nodemailer/emailTemplates';
+//###############################################################
 
 export const SignUp = async (req: Request, res: Response) => {
   const { email, name, password } = req.body;

@@ -1,26 +1,15 @@
 import React from 'react';
 import ButtonElement from './ButtonElement';
 import PasswordInput from './PasswordInput';
-import Swal from 'sweetalert2';
 
 interface IProps {
   buttonTitle: string;
   buttonFunction(): void;
-  successPopUpMessage: string;
-  errorPopUpMessage: string;
-  errorFunction(): void;
-  successButtonTitle: string;
-  errorButtonTitle: string;
 }
 
 export default function PasswordCompare({
   buttonTitle,
   buttonFunction,
-  successPopUpMessage,
-  errorPopUpMessage,
-  errorFunction,
-  successButtonTitle,
-  errorButtonTitle,
 }: IProps) {
   const [password, setPassword] = React.useState<string>('');
   const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');

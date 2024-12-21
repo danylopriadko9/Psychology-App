@@ -4,18 +4,14 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import { INavLink } from '../types/links';
 import MenuIcon from '@mui/icons-material/Menu';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 //Redux
-import type { RootState } from '../../GlobalRedux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { changeMenuStatus } from '@/GlobalRedux/features/mobileMenu/menuSlice';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const pathname = usePathname();
-  const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
-
   const dispatch = useDispatch();
 
   return (
@@ -48,13 +44,7 @@ export default function Header() {
             {el.title}
           </Link>
         ))}
-        <div
-          className='flex px-2 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer'
-          onClick={() => setIsDarkMode((prev) => !prev)}
-        >
-          <span>{isDarkMode ? 'Light mode' : 'Dark mode'}</span>
-          {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        </div>
+        <ThemeToggle />
         <Link
           className={`flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer ${
             pathname === '/sign-in' ? 'bg-[#101728] text-white' : ''

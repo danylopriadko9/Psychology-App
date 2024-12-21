@@ -5,6 +5,7 @@ import Header from './Components/Header';
 import Footer from './Components/Footer';
 import Container from './Components/Container';
 import Providers from '@/GlobalRedux/Provider';
+import MainContainer from './Components/MainContainer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,11 +23,13 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <Providers>
-          <Container>
+          <MainContainer>
             <Header />
-            {children}
-            <Footer />
-          </Container>
+            <Container>
+              {children}
+              <Footer />
+            </Container>
+          </MainContainer>
         </Providers>
       </body>
     </html>
