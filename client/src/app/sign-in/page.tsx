@@ -16,11 +16,9 @@ export default function SingIn() {
   };
 
   return (
-    <main className=' flex flex-col justify-center items-center py-20'>
-      <div className='flex flex-col md:w-1/3 w-11/12'>
-        <h1 className=' text-3xl font-bold text-left w-full mb-5'>
-          Welcome Back 👋
-        </h1>
+    <main className=' flex flex-col justify-center items-center py-20 w-full'>
+      <div className='flex flex-col w-full'>
+        <h1 className=' text-3xl font-bold text-left  mb-5'>Welcome Back 👋</h1>
         <p className='text-left w-full'>
           Today is a new day. It's your day. You shape it.
         </p>

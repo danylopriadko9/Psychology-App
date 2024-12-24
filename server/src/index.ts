@@ -1,20 +1,22 @@
 //###############################################################
 //============= STANDART ===================
 import express from 'express';
-import cors from 'cors';
 import 'dotenv/config';
 //============= DB ===================
 import { connectDB } from './db/connectDB';
 //============= ROUTES ===================
 import authRoutes from './routes/auth.route';
 import contactRoutes from './routes/contact.route';
+//============= CORS ===================
+import cors from 'cors';
+import { corsOptions } from './utils/corsOptions';
 //###############################################################
 
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 //using cors middleware
-app.use(cors());
+app.use(cors(corsOptions));
 
 // data parse
 app.use(express.json()); // allows us to parse incoming requests req.body

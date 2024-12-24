@@ -13,7 +13,7 @@ export interface IUser {
 }
 
 export interface IUserDocument extends IUser, mongoose.Document {
-  _id: any;
+  _id: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
   _doc?: any;

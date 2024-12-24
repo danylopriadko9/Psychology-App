@@ -15,7 +15,7 @@ export default function Header() {
   const dispatch = useDispatch();
 
   return (
-    <header className=' flex justify-between w-full h-24 border-b pr-5 pl-5 items-center'>
+    <header className=' flex justify-between w-full h-24 border-b pr-5 pl-5 items-center mb-5'>
       <Link href='/' className='cursor-pointer'>
         Logo
       </Link>

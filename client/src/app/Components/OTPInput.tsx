@@ -1,17 +1,13 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { MutableRefObject } from 'react';
 
 interface OTPInputProps {
   length: number;
+  inputRefs: MutableRefObject<(HTMLInputElement | null)[]>;
 }
 
-const OTPInput: React.FC<OTPInputProps> = ({ length }) => {
-  const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  React.useEffect(() => {
-    console.log(otp);
-  }, [otp]);
+const OTPInput: React.FC<OTPInputProps> = ({ length, inputRefs }) => {
+  const [otp, setOtp] = React.useState<string[]>(Array(length).fill(''));
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,

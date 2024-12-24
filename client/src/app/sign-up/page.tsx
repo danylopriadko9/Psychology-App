@@ -4,20 +4,42 @@ import React from 'react';
 import InputElement from '../Components/InputElement';
 import PasswordCompare from '../Components/PasswordsCompare';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import Swal from 'sweetalert2';
+import { IData } from '../types/data';
+import { axiosInstance } from '../utilities/axiosInstance';
 
 export default function SingIn() {
   const router = useRouter();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordRepeated, setPasswordRepeated] = React.useState('');
 
-  const handleButton = () => {
-    console.log('sddsds');
-    router.push('/email-code-check');
+  const handleButton = async () => {
+    try {
+      await axiosInstance.post(`/auth/sign-up`, {
+        name,
+        email,
+        password,
+        passwordRepeated,
+      });
+      router.push('/email-code-check');
+    } catch (error) {
+      const e = error as AxiosError;
+      const res = e.response?.data as IData;
+      Swal.fire({
+        title: 'Error!',
+        text: res.message.replace('Error: ', ''),
+        icon: 'error',
+        confirmButtonText: 'Got it',
+      });
+    }
   };
 
   return (
     <main className=' w-full flex flex-col justify-center items-center py-20'>
-      <div className='flex flex-col md:w-1/3 w-11/12'>
+      <div className='flex flex-col w-full'>
         <h1 className=' text-3xl font-bold text-left w-full mb-5'>
           Create an account 🏁
         </h1>
@@ -44,12 +66,10 @@ export default function SingIn() {
           <PasswordCompare
             buttonTitle='Sign up'
             buttonFunction={handleButton}
-            successPopUpMessage='Account has been created! You will be redirected to the home page after a few seconds...'
-            errorPopUpMessage='The passwords you entered do not match...'
-            errorFunction={() => {}}
-            successButtonTitle='Got it'
-            errorButtonTitle='Try one more time'
-            //Maybe also I will need to add props such as name, email or userId
+            password={password}
+            setPassword={setPassword}
+            passwordRepeated={passwordRepeated}
+            setPasswordRepeated={setPasswordRepeated}
           />
         </div>
         <p className='text-center mt-2'>

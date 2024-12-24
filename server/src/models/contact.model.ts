@@ -1,5 +1,8 @@
+//###############################################################
 import mongoose from 'mongoose';
+//============= TYPES ===================
 import { IContactDocument } from '../types/contact.types';
+//###############################################################
 
 const contactSchema = new mongoose.Schema({
   name: {

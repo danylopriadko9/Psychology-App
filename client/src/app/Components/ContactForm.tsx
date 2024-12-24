@@ -2,6 +2,7 @@
 import React from 'react';
 import axios, { AxiosError } from 'axios';
 import Swal from 'sweetalert2';
+import { IData } from '../types/data';
 
 type eType =
   | React.ChangeEvent<HTMLTextAreaElement>
@@ -10,11 +11,6 @@ type eType =
 type formType = {
   name: string;
   email: string;
-  message: string;
-};
-
-type dataType = {
-  success: boolean;
   message: string;
 };
 
@@ -31,10 +27,7 @@ export default function ContactForm() {
 
   const sendForm = async () => {
     try {
-      const { data } = await axios.post(
-        'http://localhost:5000/api/contact/',
-        message
-      );
+      await axios.post('http://localhost:5000/api/contact/', message);
       Swal.fire({
         title: 'Success!',
         text: 'The contact request was created successfully!',
@@ -48,7 +41,7 @@ export default function ContactForm() {
       }));
     } catch (error) {
       const e = error as AxiosError;
-      const res = e.response?.data as dataType;
+      const res = e.response?.data as IData;
       Swal.fire({
         title: 'Error!',
         text: res.message.replace('Error: ', ''),

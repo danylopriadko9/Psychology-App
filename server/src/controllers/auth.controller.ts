@@ -9,6 +9,7 @@ import { User } from '../models/user.model';
 //============= UTILITIES ===================
 import { generateVerificationToken } from '../utils/generateVerificationToken';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie';
+import { emailVerification } from '../utils/emailVerification';
 //============= EMAIL SERVICES ===================
 import { sendEmail } from '../nodemailer/sendEmail';
 import {
@@ -20,10 +21,26 @@ import {
 //###############################################################
 
 export const SignUp = async (req: Request, res: Response) => {
-  const { email, name, password } = req.body;
+  const { email, name, password, passwordRepeated } = req.body;
   try {
-    if (!email || !password || !name) {
-      throw new Error('[server]: All fields are required');
+    if (!email || !password || !passwordRepeated || !name) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'All fields are required' });
+    }
+
+    //Email validation
+    if (!emailVerification(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Incorrect email' });
+    }
+
+    if (passwordRepeated !== password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Passwor and repeated password need to be the same!',
+      });
     }
 
     const userAlreadyExists = await User.findOne({ email });
@@ -45,7 +62,7 @@ export const SignUp = async (req: Request, res: Response) => {
     });
 
     await user.save();
-    generateTokenAndSetCookie(res, user._id);
+    generateTokenAndSetCookie(res, user);
     sendEmail(
       user.email,
       'Email Verification',
@@ -57,11 +74,7 @@ export const SignUp = async (req: Request, res: Response) => {
 
     res.status(201).send({
       success: true,
-      message: 'User created successfully',
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
+      message: "User's account was created successfully!",
     });
   } catch (error) {
     let message;
@@ -103,8 +116,7 @@ export const VerifyEmail = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'User was verified successfully!',
-      user: { ...user._doc, password: undefined },
+      message: "User's account was verified successfully!",
     });
   } catch (error) {
     let message;
@@ -126,7 +138,7 @@ export const SendAnotherEmailVerificationCode = async (
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user)
-      return res.status(200).json({ success: false, message: 'Invalid email' });
+      return res.status(400).json({ success: false, message: 'Invalid email' });
 
     const code = generateVerificationToken();
     user.verificationToken = code;
@@ -177,7 +189,7 @@ export const SignIn = async (req: Request, res: Response) => {
         .status(400)
         .json({ success: false, message: 'Invalid credentials' });
 
-    generateTokenAndSetCookie(res, user._id);
+    generateTokenAndSetCookie(res, user);
     user.lastLogin = new Date(Date.now());
     await user.save();
 
@@ -193,6 +205,7 @@ export const SignIn = async (req: Request, res: Response) => {
 
 export const Logout = async (req: Request, res: Response) => {
   res.clearCookie('token');
+  res.clearCookie('email');
   res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
 

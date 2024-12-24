@@ -3,6 +3,7 @@
 import { Request, Response } from 'express';
 //============= MONGODB MODELS ===================
 import { Contact } from '../models/contact.model';
+import { emailVerification } from '../utils/emailVerification';
 //###############################################################
 
 export const createContactRequest = async (req: Request, res: Response) => {
@@ -13,10 +14,10 @@ export const createContactRequest = async (req: Request, res: Response) => {
     }
 
     //Email validation
-    const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!re.test(String(email).toLowerCase())) {
-      throw new Error('Invalid email');
+    if (!emailVerification(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Incorrect email' });
     }
 
     const contact = new Contact({
@@ -30,7 +31,6 @@ export const createContactRequest = async (req: Request, res: Response) => {
     res.status(201).send({
       success: true,
       message: 'Contact request was created successfully',
-      contactInfo: contact._doc,
     });
   } catch (error) {
     let message;

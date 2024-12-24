@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import ButtonElement from './ButtonElement';
 import PasswordInput from './PasswordInput';
 
 interface IProps {
   buttonTitle: string;
   buttonFunction(): void;
+  password: string;
+  setPassword: Dispatch<SetStateAction<string>>;
+  passwordRepeated: string;
+  setPasswordRepeated: Dispatch<SetStateAction<string>>;
 }
 
 export default function PasswordCompare({
   buttonTitle,
   buttonFunction,
+  password,
+  setPassword,
+  passwordRepeated,
+  setPasswordRepeated,
 }: IProps) {
-  const [password, setPassword] = React.useState<string>('');
-  const [repeatedPassword, setRepeatedPassword] = React.useState<string>('');
-
   return (
     <div className='flex flex-col gap-3'>
       <PasswordInput
@@ -25,8 +30,8 @@ export default function PasswordCompare({
       />
       <PasswordInput
         type='repeatedPassword'
-        value={repeatedPassword}
-        handleChange={(e) => setRepeatedPassword(e.target.value)}
+        value={passwordRepeated}
+        handleChange={(e) => setPasswordRepeated(e.target.value)}
         labelTitle='Repeat your password'
         placeholder='Repeat your password here...'
       />
