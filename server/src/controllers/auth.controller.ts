@@ -39,7 +39,7 @@ export const SignUp = async (req: Request, res: Response) => {
     if (passwordRepeated !== password) {
       return res.status(400).json({
         success: false,
-        message: 'Passwor and repeated password need to be the same!',
+        message: 'Passwords are not the same',
       });
     }
 
@@ -74,7 +74,8 @@ export const SignUp = async (req: Request, res: Response) => {
 
     res.status(201).send({
       success: true,
-      message: "User's account was created successfully!",
+      message: "User's account was created successfully",
+      user: { ...user._doc, password: undefined, verificationToken: undefined },
     });
   } catch (error) {
     let message;
@@ -82,7 +83,7 @@ export const SignUp = async (req: Request, res: Response) => {
     else
       res.status(400).json({
         success: false,
-        message: '[server/SignUp-Controller]: Unknown error occured',
+        message: 'Unknown error occured',
       });
     res.status(400).json({ success: false, message: message });
   }
@@ -97,11 +98,12 @@ export const VerifyEmail = async (req: Request, res: Response) => {
       email,
     });
 
-    if (!user)
+    if (!user) {
       return res.status(400).json({
         success: false,
         message: 'Invalid or expired verification code',
       });
+    }
 
     user.isVerified = true;
     user.verificationToken = undefined;
@@ -117,6 +119,7 @@ export const VerifyEmail = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "User's account was verified successfully!",
+      user: { ...user._doc, password: undefined, verificationToken: undefined },
     });
   } catch (error) {
     let message;
@@ -157,7 +160,7 @@ export const SendAnotherEmailVerificationCode = async (
     res.status(200).json({
       success: true,
       message: 'New email verification code was send successfully',
-      user: { ...user._doc, password: undefined },
+      user: { ...user._doc, password: undefined, verificationToken: undefined },
     });
   } catch (error) {
     let message;

@@ -2,11 +2,13 @@
 // store/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import menuSlice from './features/mobileMenu/menuSlice';
+import authorizationSlice from './features/auth/authorizationSlice';
 
 export function makeStore() {
   return configureStore({
     reducer: {
       menu: menuSlice,
+      authorization: authorizationSlice,
     },
     devTools: process.env.NODE_ENV !== 'production',
   });

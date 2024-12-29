@@ -1,40 +1,50 @@
 'use client';
-import Link from 'next/link';
+//###############################################################
 import React from 'react';
+//============= COMPONENTS ===================
 import InputElement from '../Components/InputElement';
 import PasswordCompare from '../Components/PasswordsCompare';
+//============= NAVIGATION ===================
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AxiosError } from 'axios';
+//============= LIBRARIES ===================
 import Swal from 'sweetalert2';
-import { IData } from '../types/data';
-import { axiosInstance } from '../utilities/axiosInstance';
+//============= REDUX ===================
+import { useDispatch } from 'react-redux';
+import { createUser } from '@/GlobalRedux/features/auth/authorizationSlice';
+import { AppDispatch } from '@/GlobalRedux/store';
+//###############################################################
 
-export default function SingIn() {
+export default function SingUp() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [passwordRepeated, setPasswordRepeated] = React.useState('');
 
   const handleButton = async () => {
-    try {
-      await axiosInstance.post(`/auth/sign-up`, {
-        name,
-        email,
-        password,
-        passwordRepeated,
-      });
-      router.push('/email-code-check');
-    } catch (error) {
-      const e = error as AxiosError;
-      const res = e.response?.data as IData;
+    const result = await dispatch(
+      createUser({ email, name, password, passwordRepeated })
+    );
+    if (createUser.rejected.match(result)) {
       Swal.fire({
         title: 'Error!',
-        text: res.message.replace('Error: ', ''),
+        text: (result.payload as string) || 'Unknown error',
         icon: 'error',
         confirmButtonText: 'Got it',
       });
+      return;
     }
+
+    Swal.fire({
+      title: 'Success!',
+      text: 'Account was created successfully',
+      icon: 'success',
+      confirmButtonText: 'Got it',
+    });
+    router.push('/email-code-check');
   };
 
   return (

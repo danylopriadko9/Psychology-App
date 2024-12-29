@@ -5,87 +5,73 @@ import React from 'react';
 import ButtonElement from '../Components/ButtonElement';
 import OTPInput from '../Components/OTPInput';
 import Timer from '../Components/Timer';
-//============= TYPES ===================
-import { IData } from '../types/data';
 //============= HOOKS ===================
 import { useRouter } from 'next/navigation';
 //============= PACKAGES ===================
 import Swal from 'sweetalert2';
-import axios, { AxiosError } from 'axios';
+//============= REDUX ===================
+import { AppDispatch, RootState } from '@/GlobalRedux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  emailVerification,
+  SendAnotherEmailVerificationCode,
+} from '@/GlobalRedux/features/auth/authorizationSlice';
+import { ISignUpState } from '../types/reduxTypes/auth';
 //###############################################################
 
 export default function EmailCodeCheck() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { user } = useSelector<RootState, ISignUpState>(
+    (state) => state.authorization
+  );
+
   const [timeLeft, setTimeLeft] = React.useState<number>(30);
-  const [email, setEmail] = React.useState<string>('danylopriadko9@gmail.com');
   const inputRefs = React.useRef<HTMLInputElement[]>([]);
 
   const resendCodeButton = async () => {
-    try {
-      //Sending a request for a new verification code
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/send-new-email-verification-code`,
-        { email }
-      );
-      //Set new timer
-      setTimeLeft(30);
-
-      //Success Pop-up
-      const d = data as IData;
-      Swal.fire({
-        title: 'Success!',
-        text: d.message,
-        icon: 'success',
-        confirmButtonText: 'Got it',
-      });
-    } catch (error) {
-      const e = error as AxiosError;
-      const res = e.response?.data as IData;
-
-      //Fail Pop-up
+    console.log('user: ', user?.email);
+    const response = await dispatch(
+      SendAnotherEmailVerificationCode(user?.email || '')
+    );
+    if (SendAnotherEmailVerificationCode.rejected.match(response)) {
       Swal.fire({
         title: 'Error!',
-        text: res.message.replace('Error: ', ''),
+        text: (response.payload as string) || 'Unknown error occupied',
         icon: 'error',
         confirmButtonText: 'Got it',
       });
+      return;
     }
+    setTimeLeft(30);
   };
 
   const handleButton = async () => {
-    try {
-      //Join the code from email to a string
-      const code = inputRefs.current.map((el, _) => el.value).join('');
+    //Join the code from email to a string
+    const code = inputRefs.current.map((el, _) => el.value).join('');
 
-      //Sending a request for an email verification
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/verify-email`,
-        { email, code }
-      );
+    const result = await dispatch(
+      emailVerification({ code, email: user?.email || '' })
+    );
 
-      //Success Pop-up
-      const d = data as IData;
-      Swal.fire({
-        title: 'Success!',
-        text: d.message,
-        icon: 'success',
-        confirmButtonText: 'Got it',
-      });
-
-      //Redirection on the main page
-      router.push('/');
-    } catch (error) {
-      const e = error as AxiosError;
-      const res = e.response?.data as IData;
-
-      //Fail Pop-up
+    if (emailVerification.rejected.match(result)) {
       Swal.fire({
         title: 'Error!',
-        text: res.message.replace('Error: ', ''),
+        text: (result.payload as string) || 'Unknown error',
         icon: 'error',
         confirmButtonText: 'Got it',
       });
+      return;
     }
+
+    Swal.fire({
+      title: 'Success!',
+      text: 'Your email was verified successfully',
+      icon: 'success',
+      confirmButtonText: 'Got it',
+    });
+    router.push('/');
   };
 
   return (
@@ -102,7 +88,7 @@ export default function EmailCodeCheck() {
             {timeLeft === 0 ? (
               <span
                 className='underline text-blue-500 cursor-pointer'
-                onClick={resendCodeButton}
+                onClick={() => resendCodeButton()}
               >
                 Resend code
               </span>
