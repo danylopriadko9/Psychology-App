@@ -8,7 +8,6 @@ export const VerifyToken = (
   next: NextFunction
 ) => {
   try {
-    console.log(req);
     const token = req.cookies.token;
     if (!token) {
       return res

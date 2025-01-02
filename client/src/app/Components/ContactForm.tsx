@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
 import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sendContactForm } from '@/GlobalRedux/features/contactForm/contactFormSlice';
 import { ISendContactForm } from '../types/reduxTypes/contact';
-import { AppDispatch } from '@/GlobalRedux/store';
+import { AppDispatch, RootState } from '@/GlobalRedux/store';
 
 type eType =
   | React.ChangeEvent<HTMLTextAreaElement>
@@ -12,14 +12,32 @@ type eType =
 
 export default function ContactForm() {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.authorization);
+
   const [message, setMessage] = React.useState<ISendContactForm>({
     userName: '',
     email: '',
     message: '',
   });
 
+  React.useEffect(() => {
+    setMessage((prev) => ({
+      ...prev,
+      userName: user ? user.name : '',
+      email: user ? user.email : '',
+    }));
+  }, [user]);
+
   const handleForm = (e: eType) => {
     setMessage((p) => ({ ...p, [e.target.name]: e.target.value }));
+  };
+
+  const clearForm = () => {
+    setMessage(() => ({
+      userName: '',
+      email: '',
+      message: '',
+    }));
   };
 
   const sendForm = async () => {
@@ -29,7 +47,7 @@ export default function ContactForm() {
         title: 'Error!',
         text: (result.payload as string) || 'Unknown error occured',
         icon: 'error',
-        confirmButtonText: 'Cool',
+        confirmButtonText: 'Got it',
       });
       return;
     }
@@ -37,13 +55,9 @@ export default function ContactForm() {
       title: 'Success!',
       text: 'The contact request was created successfully!',
       icon: 'success',
-      confirmButtonText: 'Cool',
+      confirmButtonText: 'Got it',
     });
-    setMessage(() => ({
-      userName: '',
-      email: '',
-      message: '',
-    }));
+    clearForm();
   };
 
   return (
@@ -81,6 +95,12 @@ export default function ContactForm() {
         onClick={sendForm}
       >
         Send
+      </button>
+      <button
+        className='bg-gray-500 text-white items-center py-2 rounded-sm cursor-pointer hover:bg-gray-400 transition-all'
+        onClick={clearForm}
+      >
+        Clear Form
       </button>
     </div>
   );

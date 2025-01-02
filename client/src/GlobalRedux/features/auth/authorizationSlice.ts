@@ -77,6 +77,38 @@ export const SendAnotherEmailVerificationCode = createAsyncThunk(
   }
 );
 
+export const AuthorizationCheck = createAsyncThunk(
+  'authorization/authorization-check',
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.post('/auth/auth-check');
+      return data as IServerResponse;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const res = error.response?.data as IData;
+        return thunkAPI.rejectWithValue(res.message.replace('Error: ', ''));
+      }
+      throw error;
+    }
+  }
+);
+
+export const LogOut = createAsyncThunk(
+  'authorization/log-out',
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await axiosInstance.post('/auth/logout');
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const res = error.response?.data as IData;
+        return thunkAPI.rejectWithValue(res.message.replace('Error: ', ''));
+      }
+      throw error;
+    }
+  }
+);
+
 const initialState = {
   user: null,
   isAuthenticated: false,
@@ -145,6 +177,42 @@ const authSlice = createSlice({
           (action.payload as string) || 'Unknown error occupied';
       }
     );
+    //###############################################################
+    //                      Authorization Check                    //
+    //###############################################################
+    builder.addCase(AuthorizationCheck.pending, (state) => {
+      state.isLoading = true;
+      state.errorMessage = null;
+    });
+    builder.addCase(AuthorizationCheck.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(AuthorizationCheck.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage =
+        (action.payload as string) || 'Unknown error occupied';
+    });
+    //###############################################################
+    //                         LOG-OUT                             //
+    //###############################################################
+    builder.addCase(LogOut.pending, (state) => {
+      state.isLoading = true;
+      state.errorMessage = null;
+    });
+    builder.addCase(LogOut.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage = null;
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+    builder.addCase(LogOut.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errorMessage =
+        (action.payload as string) || 'Unknown error occupied';
+    });
   },
 });
 

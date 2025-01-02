@@ -21,13 +21,5 @@ export const generateTokenAndSetCookie = (
     sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-
-  res.cookie('email', user._doc.email, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', //https
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
   return token;
 };
