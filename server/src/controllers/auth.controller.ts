@@ -18,6 +18,8 @@ import {
   VERIFICATION_EMAIL_TEMPLATE,
   WELCOME_EMAIL_TEMPLATE,
 } from '../nodemailer/emailTemplates';
+import mongoose from 'mongoose';
+import { IRequest } from '../types/middleware.verifyToken';
 //###############################################################
 
 export const SignUp = async (req: Request, res: Response) => {
@@ -287,5 +289,33 @@ export const ResetPassword = async (req: Request, res: Response) => {
     res
       .status(400)
       .json({ success: false, message: 'Error in reset password' });
+  }
+};
+
+export const checkAuth = async (req: IRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'User ID is undefined' });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User does not existm invalid user ID',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'User is authorized successfully',
+      user: { ...user._doc, password: undefined },
+    });
+  } catch (error) {
+    let message = String(error);
+    console.log('error in auth check ', message);
+    res.status(400).json({ success: false, message: 'Error in auth check' });
   }
 };

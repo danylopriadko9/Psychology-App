@@ -7,9 +7,15 @@ import {
   SignUp,
   VerifyEmail,
   ResetPassword,
+  checkAuth,
 } from '../controllers/auth.controller';
-const router = express.Router();
+import { VerifyToken } from '../middlewares/verifyToken';
+import cookieParser from 'cookie-parser';
 
+const router = express.Router();
+router.use(cookieParser());
+
+router.post('/auth-check', VerifyToken as any, checkAuth as any);
 router.post('/sign-up', SignUp as any);
 router.post('/sign-in', SignIn as any);
 router.post('/logout', Logout);

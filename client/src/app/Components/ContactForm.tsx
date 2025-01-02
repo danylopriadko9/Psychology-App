@@ -1,22 +1,19 @@
 'use client';
 import React from 'react';
-import axios, { AxiosError } from 'axios';
 import Swal from 'sweetalert2';
-import { IData } from '../types/data';
+import { useDispatch } from 'react-redux';
+import { sendContactForm } from '@/GlobalRedux/features/contactForm/contactFormSlice';
+import { ISendContactForm } from '../types/reduxTypes/contact';
+import { AppDispatch } from '@/GlobalRedux/store';
 
 type eType =
   | React.ChangeEvent<HTMLTextAreaElement>
   | React.ChangeEvent<HTMLInputElement>;
 
-type formType = {
-  name: string;
-  email: string;
-  message: string;
-};
-
 export default function ContactForm() {
-  const [message, setMessage] = React.useState<formType>({
-    name: '',
+  const dispatch = useDispatch<AppDispatch>();
+  const [message, setMessage] = React.useState<ISendContactForm>({
+    userName: '',
     email: '',
     message: '',
   });
@@ -26,29 +23,27 @@ export default function ContactForm() {
   };
 
   const sendForm = async () => {
-    try {
-      await axios.post('http://localhost:5000/api/contact/', message);
-      Swal.fire({
-        title: 'Success!',
-        text: 'The contact request was created successfully!',
-        icon: 'success',
-        confirmButtonText: 'Cool',
-      });
-      setMessage(() => ({
-        name: '',
-        email: '',
-        message: '',
-      }));
-    } catch (error) {
-      const e = error as AxiosError;
-      const res = e.response?.data as IData;
+    const result = await dispatch(sendContactForm(message));
+    if (sendContactForm.rejected.match(result)) {
       Swal.fire({
         title: 'Error!',
-        text: res.message.replace('Error: ', ''),
+        text: (result.payload as string) || 'Unknown error occured',
         icon: 'error',
         confirmButtonText: 'Cool',
       });
+      return;
     }
+    Swal.fire({
+      title: 'Success!',
+      text: 'The contact request was created successfully!',
+      icon: 'success',
+      confirmButtonText: 'Cool',
+    });
+    setMessage(() => ({
+      userName: '',
+      email: '',
+      message: '',
+    }));
   };
 
   return (
@@ -58,9 +53,9 @@ export default function ContactForm() {
         className='p-2 bg-slate-200 outline-none rounded-md'
         type='text'
         placeholder='Name'
-        name='name'
+        name='userName'
         onChange={(e) => handleForm(e)}
-        value={message.name}
+        value={message.userName}
       />
       <input
         className='p-2 bg-slate-200 outline-none rounded-md'
