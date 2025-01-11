@@ -1,27 +1,20 @@
-'use client';
-
-import React from 'react';
-import PasswordCompare from '../Components/PasswordsCompare';
-import { useRouter } from 'next/navigation';
+import React from "react";
 
 export default function ResetPassword() {
-  const router = useRouter();
-  const handleButton = () => {
-    router.push('/sign-in');
-  };
   return (
-    <div className=' flex flex-col justify-center items-center py-20 w-full'>
-      <div className='flex flex-col w-full'>
-        <div className=' flex flex-col gap-3'>
-          <h1 className=' text-3xl font-bold text-left w-full mb-5'>
-            Provide new password 🔒
-          </h1>
-          <PasswordCompare
-            buttonTitle='Change password'
-            buttonFunction={handleButton}
-          />
-        </div>
-      </div>
+    <div className=" flex flex-col justify-center items-center py-20 w-full">
+      <h1 className="text-3xl font-bold mb-5 text-center">
+        Password Reset Request Sent! 📧
+      </h1>
+      <p className="text-center mb-2">
+        We've sent you an email with a password recovery link. Please check your
+        inbox (and your spam or junk folder, just in case). Follow the
+        instructions in the email to reset your password.
+      </p>
+      <p className="text-center text-xs text-gray-600">
+        If you don't receive the email within a few minutes, try resending the
+        request or contact our support team for assistance.
+      </p>
     </div>
   );
 }

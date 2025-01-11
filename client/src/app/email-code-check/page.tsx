@@ -14,7 +14,7 @@ import { AppDispatch, RootState } from '@/GlobalRedux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   emailVerification,
-  SendAnotherEmailVerificationCode,
+  sendAnotherEmailVerificationCode,
 } from '@/GlobalRedux/features/auth/authorizationSlice';
 import { ISignUpState } from '../types/reduxTypes/auth';
 //###############################################################
@@ -33,9 +33,9 @@ export default function EmailCodeCheck() {
   const resendCodeButton = async () => {
     console.log('user: ', user?.email);
     const response = await dispatch(
-      SendAnotherEmailVerificationCode(user?.email || '')
+      sendAnotherEmailVerificationCode(user?.email || '')
     );
-    if (SendAnotherEmailVerificationCode.rejected.match(response)) {
+    if (sendAnotherEmailVerificationCode.rejected.match(response)) {
       Swal.fire({
         title: 'Error!',
         text: (response.payload as string) || 'Unknown error occupied',

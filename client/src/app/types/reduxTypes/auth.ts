@@ -36,3 +36,14 @@ export interface IEmailVerificationArguments {
   code: string;
   email: string;
 }
+
+export interface ISignInArguments {
+  email: string;
+  password: string;
+}
+
+export interface IResetPasswordArguments {
+  password: string;
+  passwordRepeated: string;
+  resetPasswordToken: string | string[];
+}
