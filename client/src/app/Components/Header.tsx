@@ -13,6 +13,7 @@ import {
   authorizationCheck,
   logOut,
 } from "@/GlobalRedux/features/auth/asyncThunks";
+import Providers from "@/GlobalRedux/Provider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -31,46 +32,12 @@ export default function Header() {
   };
 
   return (
-    <header className=" flex justify-between w-full h-24 border-b pr-5 pl-5 items-center mb-5">
-      <Link href="/" className="cursor-pointer">
-        Logo
-      </Link>
-      <div className=" md:hidden flex gap-2 items-center">
-        <Link
-          className={`flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer ${
-            pathname === "/sign-in" ? "bg-[#101728] text-white" : ""
-          }`}
-          href="/sign-in"
-        >
-          Sing-In
+    <Providers>
+      <header className=" flex justify-between w-full h-24 border-b pr-5 pl-5 items-center mb-5">
+        <Link href="/" className="cursor-pointer">
+          Logo
         </Link>
-
-        <div className="px-2 py-2" onClick={() => dispatch(changeMenuStatus())}>
-          <MenuIcon />
-        </div>
-      </div>
-      <div className="md:flex gap-3 hidden items-center">
-        {navLinks.map((el: INavLink, i: number) => (
-          <Link
-            key={i}
-            href={el.url}
-            className={`text-zinc-400 transition ${
-              pathname === el.url ? "text-zinc-900" : ""
-            }`}
-          >
-            {el.title}
-          </Link>
-        ))}
-        <ThemeToggle />
-        {isAuthenticated ? (
-          <button
-            onClick={handleLogOutButton}
-            className="flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer
-          "
-          >
-            Log-Out
-          </button>
-        ) : (
+        <div className=" md:hidden flex gap-2 items-center">
           <Link
             className={`flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer ${
               pathname === "/sign-in" ? "bg-[#101728] text-white" : ""
@@ -79,9 +46,48 @@ export default function Header() {
           >
             Sing-In
           </Link>
-        )}
-      </div>
-    </header>
+
+          <div
+            className="px-2 py-2"
+            onClick={() => dispatch(changeMenuStatus())}
+          >
+            <MenuIcon />
+          </div>
+        </div>
+        <div className="md:flex gap-3 hidden items-center">
+          {navLinks.map((el: INavLink, i: number) => (
+            <Link
+              key={i}
+              href={el.url}
+              className={`text-zinc-400 transition ${
+                pathname === el.url ? "text-zinc-900" : ""
+              }`}
+            >
+              {el.title}
+            </Link>
+          ))}
+          <ThemeToggle />
+          {isAuthenticated ? (
+            <button
+              onClick={handleLogOutButton}
+              className="flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer
+          "
+            >
+              Log-Out
+            </button>
+          ) : (
+            <Link
+              className={`flex px-4 py-2 justify-center items-center gap-2 rounded-md border cursor-pointer ${
+                pathname === "/sign-in" ? "bg-[#101728] text-white" : ""
+              }`}
+              href="/sign-in"
+            >
+              Sing-In
+            </Link>
+          )}
+        </div>
+      </header>
+    </Providers>
   );
 }
 

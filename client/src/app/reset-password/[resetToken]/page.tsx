@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/GlobalRedux/store";
 import Swal from "sweetalert2";
 import { resetPassword } from "@/GlobalRedux/features/auth/asyncThunks";
+import Providers from "@/GlobalRedux/Provider";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -43,22 +44,24 @@ export default function ResetPassword() {
     router.push("/sign-in");
   };
   return (
-    <div className=" flex flex-col justify-center items-center py-20 w-full">
-      <div className="flex flex-col w-full">
-        <div className=" flex flex-col gap-3">
-          <h1 className=" text-3xl font-bold text-left w-full mb-5">
-            Provide new password 🔒
-          </h1>
-          <PasswordCompare
-            buttonTitle="Change password"
-            buttonFunction={handleButton}
-            password={password}
-            setPassword={setPassword}
-            passwordRepeated={passwordRepeated}
-            setPasswordRepeated={setPasswordRepeated}
-          />
+    <Providers>
+      <div className=" flex flex-col justify-center items-center py-20 w-full">
+        <div className="flex flex-col w-full">
+          <div className=" flex flex-col gap-3">
+            <h1 className=" text-3xl font-bold text-left w-full mb-5">
+              Provide new password 🔒
+            </h1>
+            <PasswordCompare
+              buttonTitle="Change password"
+              buttonFunction={handleButton}
+              password={password}
+              setPassword={setPassword}
+              passwordRepeated={passwordRepeated}
+              setPasswordRepeated={setPasswordRepeated}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </Providers>
   );
 }

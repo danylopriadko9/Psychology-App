@@ -4,7 +4,6 @@ import "./globals.css";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Container from "./Components/Container";
-import Providers from "@/GlobalRedux/Provider";
 import MainContainer from "./Components/MainContainer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,17 +21,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          {/* client - просто обгорнути всі компоненти котрі потребують редакс окремо */}
-          <MainContainer>
-            {/* client  */}
-            <Header />
-            <Container>
-              {children}
-              <Footer />
-            </Container>
-          </MainContainer>
-        </Providers>
+        <MainContainer>
+          {/* client  */}
+          <Header />
+          <Container>
+            {children}
+            <Footer />
+          </Container>
+        </MainContainer>
       </body>
     </html>
   );

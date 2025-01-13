@@ -16,6 +16,7 @@ import {
   emailVerification,
   sendAnotherEmailVerificationCode,
 } from "@/GlobalRedux/features/auth/asyncThunks";
+import Providers from "@/GlobalRedux/Provider";
 import { ISignUpState } from "../types/reduxTypes/auth";
 //###############################################################
 
@@ -75,32 +76,34 @@ export default function EmailCodeCheck() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center py-20 w-full">
-      <div className="flex flex-col w-full">
-        <div className="flex flex-col gap-3">
-          <h1 className=" text-3xl font-bold text-left w-full mb-5">
-            Provide code from your email 🔒
-          </h1>
-          <OTPInput length={6} inputRefs={inputRefs} />
-          <ButtonElement title="Provide code" handleClick={handleButton} />
-          <p className="text-right mt-3">
-            Don't get any mails?{" "}
-            {timeLeft === 0 ? (
-              <span
-                className="underline text-blue-500 cursor-pointer"
-                onClick={() => resendCodeButton()}
-              >
-                Resend code
-              </span>
-            ) : (
-              <span className=" text-gray-500 underline">
-                Resend code after{" "}
-                <Timer setTimeLeft={setTimeLeft} timeLeft={timeLeft} /> sec.
-              </span>
-            )}
-          </p>
+    <Providers>
+      <div className="flex flex-col justify-center items-center py-20 w-full">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-3">
+            <h1 className=" text-3xl font-bold text-left w-full mb-5">
+              Provide code from your email 🔒
+            </h1>
+            <OTPInput length={6} inputRefs={inputRefs} />
+            <ButtonElement title="Provide code" handleClick={handleButton} />
+            <p className="text-right mt-3">
+              Don't get any mails?{" "}
+              {timeLeft === 0 ? (
+                <span
+                  className="underline text-blue-500 cursor-pointer"
+                  onClick={() => resendCodeButton()}
+                >
+                  Resend code
+                </span>
+              ) : (
+                <span className=" text-gray-500 underline">
+                  Resend code after{" "}
+                  <Timer setTimeLeft={setTimeLeft} timeLeft={timeLeft} /> sec.
+                </span>
+              )}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </Providers>
   );
 }

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { sendContactForm } from "@/GlobalRedux/features/contactForm/contactFormSlice";
 import { ISendContactForm } from "../types/reduxTypes/contact";
 import { AppDispatch, RootState } from "@/GlobalRedux/store";
+import Providers from "@/GlobalRedux/Provider";
 
 type eType =
   | React.ChangeEvent<HTMLTextAreaElement>
@@ -63,47 +64,49 @@ export default function ContactForm() {
   };
 
   return (
-    <div className=" flex flex-col gap-3 w-full">
-      <h1 className=" text-4xl">Contact Form</h1>
-      <input
-        className="p-2 bg-slate-200 outline-none rounded-md"
-        type="text"
-        placeholder="Name"
-        name="userName"
-        onChange={(e) => handleForm(e)}
-        value={message.userName}
-      />
-      <input
-        className="p-2 bg-slate-200 outline-none rounded-md"
-        type="text"
-        placeholder="Email"
-        name="email"
-        onChange={(e) => handleForm(e)}
-        value={message.email}
-      />
-      <div className="flex flex-col gap-1">
-        <textarea
-          className="p-2 bg-slate-200 resize-none h-[200px] outline-none rounded-md"
-          placeholder="Leave your message here"
-          name="message"
-          maxLength={250}
+    <Providers>
+      <div className=" flex flex-col gap-3 w-full">
+        <h1 className=" text-4xl">Contact Form</h1>
+        <input
+          className="p-2 bg-slate-200 outline-none rounded-md"
+          type="text"
+          placeholder="Name"
+          name="userName"
           onChange={(e) => handleForm(e)}
-          value={message.message}
+          value={message.userName}
         />
-        <p className={`text-right`}>{message.message.length}/250</p>
+        <input
+          className="p-2 bg-slate-200 outline-none rounded-md"
+          type="text"
+          placeholder="Email"
+          name="email"
+          onChange={(e) => handleForm(e)}
+          value={message.email}
+        />
+        <div className="flex flex-col gap-1">
+          <textarea
+            className="p-2 bg-slate-200 resize-none h-[200px] outline-none rounded-md"
+            placeholder="Leave your message here"
+            name="message"
+            maxLength={250}
+            onChange={(e) => handleForm(e)}
+            value={message.message}
+          />
+          <p className={`text-right`}>{message.message.length}/250</p>
+        </div>
+        <button
+          className="bg-orange-500 text-white items-center py-2 rounded-sm cursor-pointer hover:bg-orange-400 transition-all"
+          onClick={sendForm}
+        >
+          Send
+        </button>
+        <button
+          className="bg-gray-500 text-white items-center py-2 rounded-sm cursor-pointer hover:bg-gray-400 transition-all"
+          onClick={clearForm}
+        >
+          Clear Form
+        </button>
       </div>
-      <button
-        className="bg-orange-500 text-white items-center py-2 rounded-sm cursor-pointer hover:bg-orange-400 transition-all"
-        onClick={sendForm}
-      >
-        Send
-      </button>
-      <button
-        className="bg-gray-500 text-white items-center py-2 rounded-sm cursor-pointer hover:bg-gray-400 transition-all"
-        onClick={clearForm}
-      >
-        Clear Form
-      </button>
-    </div>
+    </Providers>
   );
 }
