@@ -3,7 +3,7 @@ import React from "react";
 import InputElement from "../Components/InputElement";
 import ButtonElement from "../Components/ButtonElement";
 import { useRouter } from "next/navigation";
-import { forgotPassword } from "@/GlobalRedux/features/auth/authorizationSlice";
+import { forgotPassword } from "@/GlobalRedux/features/auth/asyncThunks";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/GlobalRedux/store";
 import Swal from "sweetalert2";

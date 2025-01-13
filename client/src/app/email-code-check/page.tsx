@@ -1,22 +1,22 @@
-'use client';
+"use client";
 //###############################################################
-import React from 'react';
+import React from "react";
 //============= COMPONENTS ===================
-import ButtonElement from '../Components/ButtonElement';
-import OTPInput from '../Components/OTPInput';
-import Timer from '../Components/Timer';
+import ButtonElement from "../Components/ButtonElement";
+import OTPInput from "../Components/OTPInput";
+import Timer from "../Components/Timer";
 //============= HOOKS ===================
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 //============= PACKAGES ===================
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 //============= REDUX ===================
-import { AppDispatch, RootState } from '@/GlobalRedux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from "@/GlobalRedux/store";
+import { useDispatch, useSelector } from "react-redux";
 import {
   emailVerification,
   sendAnotherEmailVerificationCode,
-} from '@/GlobalRedux/features/auth/authorizationSlice';
-import { ISignUpState } from '../types/reduxTypes/auth';
+} from "@/GlobalRedux/features/auth/asyncThunks";
+import { ISignUpState } from "../types/reduxTypes/auth";
 //###############################################################
 
 export default function EmailCodeCheck() {
@@ -31,16 +31,16 @@ export default function EmailCodeCheck() {
   const inputRefs = React.useRef<HTMLInputElement[]>([]);
 
   const resendCodeButton = async () => {
-    console.log('user: ', user?.email);
+    console.log("user: ", user?.email);
     const response = await dispatch(
-      sendAnotherEmailVerificationCode(user?.email || '')
+      sendAnotherEmailVerificationCode(user?.email || "")
     );
     if (sendAnotherEmailVerificationCode.rejected.match(response)) {
       Swal.fire({
-        title: 'Error!',
-        text: (response.payload as string) || 'Unknown error occupied',
-        icon: 'error',
-        confirmButtonText: 'Got it',
+        title: "Error!",
+        text: (response.payload as string) || "Unknown error occupied",
+        icon: "error",
+        confirmButtonText: "Got it",
       });
       return;
     }
@@ -49,52 +49,52 @@ export default function EmailCodeCheck() {
 
   const handleButton = async () => {
     //Join the code from email to a string
-    const code = inputRefs.current.map((el, _) => el.value).join('');
+    const code = inputRefs.current.map((el, _) => el.value).join("");
 
     const result = await dispatch(
-      emailVerification({ code, email: user?.email || '' })
+      emailVerification({ code, email: user?.email || "" })
     );
 
     if (emailVerification.rejected.match(result)) {
       Swal.fire({
-        title: 'Error!',
-        text: (result.payload as string) || 'Unknown error',
-        icon: 'error',
-        confirmButtonText: 'Got it',
+        title: "Error!",
+        text: (result.payload as string) || "Unknown error",
+        icon: "error",
+        confirmButtonText: "Got it",
       });
       return;
     }
 
     Swal.fire({
-      title: 'Success!',
-      text: 'Your email was verified successfully',
-      icon: 'success',
-      confirmButtonText: 'Got it',
+      title: "Success!",
+      text: "Account was created successfully",
+      icon: "success",
+      confirmButtonText: "Got it",
     });
-    router.push('/');
+    router.push("/");
   };
 
   return (
-    <div className='flex flex-col justify-center items-center py-20 w-full'>
-      <div className='flex flex-col w-full'>
-        <div className='flex flex-col gap-3'>
-          <h1 className=' text-3xl font-bold text-left w-full mb-5'>
+    <div className="flex flex-col justify-center items-center py-20 w-full">
+      <div className="flex flex-col w-full">
+        <div className="flex flex-col gap-3">
+          <h1 className=" text-3xl font-bold text-left w-full mb-5">
             Provide code from your email 🔒
           </h1>
           <OTPInput length={6} inputRefs={inputRefs} />
-          <ButtonElement title='Provide code' handleClick={handleButton} />
-          <p className='text-right mt-3'>
-            Don't get any mails?{' '}
+          <ButtonElement title="Provide code" handleClick={handleButton} />
+          <p className="text-right mt-3">
+            Don't get any mails?{" "}
             {timeLeft === 0 ? (
               <span
-                className='underline text-blue-500 cursor-pointer'
+                className="underline text-blue-500 cursor-pointer"
                 onClick={() => resendCodeButton()}
               >
                 Resend code
               </span>
             ) : (
-              <span className=' text-gray-500 underline'>
-                Resend code after{' '}
+              <span className=" text-gray-500 underline">
+                Resend code after{" "}
                 <Timer setTimeLeft={setTimeLeft} timeLeft={timeLeft} /> sec.
               </span>
             )}

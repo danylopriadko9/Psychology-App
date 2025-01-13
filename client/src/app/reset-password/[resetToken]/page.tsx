@@ -3,10 +3,10 @@
 import React from "react";
 import PasswordCompare from "../../Components/PasswordsCompare";
 import { useParams, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/GlobalRedux/store";
-import { resetPassword } from "@/GlobalRedux/features/auth/authorizationSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/GlobalRedux/store";
 import Swal from "sweetalert2";
+import { resetPassword } from "@/GlobalRedux/features/auth/asyncThunks";
 
 export default function ResetPassword() {
   const router = useRouter();

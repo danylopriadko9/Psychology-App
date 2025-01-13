@@ -1,175 +1,20 @@
 "use client";
 //###############################################################
 //============= TYPES ===================
-import {
-  IEmailVerificationArguments,
-  IResetPasswordArguments,
-  IServerResponse,
-  ISignInArguments,
-  ISignUpState,
-  IUserDataSingUp,
-} from "@/app/types/reduxTypes/auth";
-//============= AXIOS ===================
-import { axiosInstance } from "@/app/utilities/axiosInstance";
-import { AxiosError } from "axios";
+import { ISignUpState } from "@/app/types/reduxTypes/auth";
 //============= REDUX ===================
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { IData } from "@/app/types/data";
+import { createSlice } from "@reduxjs/toolkit";
+import {
+  authorizationCheck,
+  createUser,
+  emailVerification,
+  forgotPassword,
+  logOut,
+  resetPassword,
+  sendAnotherEmailVerificationCode,
+  signIn,
+} from "./asyncThunks";
 //###############################################################
-
-export const createUser = createAsyncThunk(
-  "authorization/sign-up",
-  async (
-    { email, name, password, passwordRepeated }: IUserDataSingUp,
-    thunkAPI
-  ) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/sign-up", {
-        email,
-        name,
-        password,
-        passwordRepeated,
-      });
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const emailVerification = createAsyncThunk(
-  "authorization/email-verification",
-  async ({ code, email }: IEmailVerificationArguments, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/verify-email", {
-        code,
-        email,
-      });
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const sendAnotherEmailVerificationCode = createAsyncThunk(
-  "authorization/send-another-email-verification-code",
-  async (email: string, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post(
-        "/auth/send-new-email-verification-code",
-        { email }
-      );
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const authorizationCheck = createAsyncThunk(
-  "authorization/authorization-check",
-  async (_, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/auth-check");
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const logOut = createAsyncThunk(
-  "authorization/log-out",
-  async (_, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/logout");
-      return data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const signIn = createAsyncThunk(
-  "authorization/sign-in",
-  async ({ email, password }: ISignInArguments, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/sign-in", {
-        email,
-        password,
-      });
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const forgotPassword = createAsyncThunk(
-  "authorization/forgot-password",
-  async (email: string, thunkAPI) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/forgot-password", {
-        email,
-      });
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
-
-export const resetPassword = createAsyncThunk(
-  "authorization/reset-password",
-  async (
-    { password, resetPasswordToken, passwordRepeated }: IResetPasswordArguments,
-    thunkAPI
-  ) => {
-    try {
-      const { data } = await axiosInstance.post("/auth/reset-password", {
-        password,
-        resetPasswordToken,
-        passwordRepeated,
-      });
-      return data as IServerResponse;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const res = error.response?.data as IData;
-        return thunkAPI.rejectWithValue(res.message.replace("Error: ", ""));
-      }
-      throw error;
-    }
-  }
-);
 
 const initialState = {
   user: null,
@@ -264,7 +109,7 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.errorMessage = null;
     });
-    builder.addCase(logOut.fulfilled, (state, action) => {
+    builder.addCase(logOut.fulfilled, (state) => {
       state.isLoading = false;
       state.errorMessage = null;
       state.user = null;
@@ -302,7 +147,7 @@ const authSlice = createSlice({
       state.isLoading = true;
       state.errorMessage = null;
     });
-    builder.addCase(forgotPassword.fulfilled, (state, action) => {
+    builder.addCase(forgotPassword.fulfilled, (state) => {
       state.isLoading = false;
       state.errorMessage = null;
     });

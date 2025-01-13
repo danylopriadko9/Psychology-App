@@ -6,7 +6,7 @@ import ButtonElement from "../Components/ButtonElement";
 import InputElement from "../Components/InputElement";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { signIn } from "@/GlobalRedux/features/auth/authorizationSlice";
+import { signIn } from "@/GlobalRedux/features/auth/asyncThunks";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/GlobalRedux/store";
 

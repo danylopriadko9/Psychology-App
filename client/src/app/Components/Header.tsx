@@ -8,11 +8,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useDispatch, useSelector } from "react-redux";
 import { changeMenuStatus } from "@/GlobalRedux/features/mobileMenu/menuSlice";
 import ThemeToggle from "./ThemeToggle";
+import { AppDispatch, RootState } from "@/GlobalRedux/store";
 import {
   authorizationCheck,
   logOut,
-} from "@/GlobalRedux/features/auth/authorizationSlice";
-import { AppDispatch, RootState } from "@/GlobalRedux/store";
+} from "@/GlobalRedux/features/auth/asyncThunks";
 
 export default function Header() {
   const pathname = usePathname();
